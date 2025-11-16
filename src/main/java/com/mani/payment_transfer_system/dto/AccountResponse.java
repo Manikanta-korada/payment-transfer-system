@@ -1,5 +1,7 @@
 package com.mani.payment_transfer_system.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +19,12 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@JsonPropertyOrder({"account_id", "balance"})
 public class AccountResponse {
 
+    @JsonProperty("account_id")
     private Long accountId;
+    
     private BigDecimal balance;
 }
 

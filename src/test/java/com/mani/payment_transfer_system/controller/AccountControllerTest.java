@@ -42,7 +42,7 @@ class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         verify(accountService).createAccount(any(AccountRequest.class));
     }
@@ -82,7 +82,7 @@ class AccountControllerTest {
 
         mockMvc.perform(get("/accounts/123"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId").value(123))
+                .andExpect(jsonPath("$.account_id").value(123))
                 .andExpect(jsonPath("$.balance").value("100.23344"));
 
         verify(accountService).getAccount(123L);

@@ -140,8 +140,8 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].sourceAccountId").value(123))
-                .andExpect(jsonPath("$[0].destinationAccountId").value(456))
+                .andExpect(jsonPath("$[0].source_account_id").value(123))
+                .andExpect(jsonPath("$[0].destination_account_id").value(456))
                 .andExpect(jsonPath("$[1].id").value(2));
 
         verify(transactionService).getAllTransactions();

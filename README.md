@@ -106,20 +106,14 @@ Creates a new account with the specified account ID and initial balance.
 **Request Body:**
 ```json
 {
-  "accountId": 123,
-  "initialBalance": "100.23344"
+  "account_id": 123,
+  "initial_balance": "100.23344"
 }
 ```
 
 **Success Response:**
 - Status: `201 Created`
-- Body:
-```json
-{
-  "message": "Account created successfully",
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+- Body: Empty (no response body)
 
 **Error Responses:**
 - `400 Bad Request` - Validation error
@@ -130,7 +124,7 @@ Creates a new account with the specified account ID and initial balance.
 ```bash
 curl -X POST http://localhost:8080/accounts \
   -H "Content-Type: application/json" \
-  -d '{"accountId": 123, "initialBalance": "100.23344"}'
+  -d '{"account_id": 123, "initial_balance": "100.23344"}'
 ```
 
 ### 2. Get Account Balance
@@ -147,7 +141,7 @@ Retrieves the account information including balance for the specified account ID
 - Body:
 ```json
 {
-  "accountId": 123,
+  "account_id": 123,
   "balance": "100.23344"
 }
 ```
@@ -170,8 +164,8 @@ Processes a transaction between two accounts, transferring the specified amount 
 **Request Body:**
 ```json
 {
-  "sourceAccountId": 123,
-  "destinationAccountId": 456,
+  "source_account_id": 123,
+  "destination_account_id": 456,
   "amount": "100.12345"
 }
 ```
@@ -196,7 +190,7 @@ Processes a transaction between two accounts, transferring the specified amount 
 ```bash
 curl -X POST http://localhost:8080/transactions \
   -H "Content-Type: application/json" \
-  -d '{"sourceAccountId": 123, "destinationAccountId": 456, "amount": "100.12345"}'
+  -d '{"source_account_id": 123, "destination_account_id": 456, "amount": "100.12345"}'
 ```
 
 ### 4. Get Transaction by ID
@@ -214,8 +208,8 @@ Retrieves a specific transaction by its unique identifier.
 ```json
 {
   "id": 1,
-  "sourceAccountId": 123,
-  "destinationAccountId": 456,
+  "source_account_id": 123,
+  "destination_account_id": 456,
   "amount": "100.12345",
   "timestamp": "2024-01-15T10:30:00"
 }
@@ -245,15 +239,15 @@ Retrieves all transactions from the system.
 [
   {
     "id": 1,
-    "sourceAccountId": 123,
-    "destinationAccountId": 456,
+    "source_account_id": 123,
+    "destination_account_id": 456,
     "amount": "100.12345",
     "timestamp": "2024-01-15T10:30:00"
   },
   {
     "id": 2,
-    "sourceAccountId": 456,
-    "destinationAccountId": 789,
+    "source_account_id": 456,
+    "destination_account_id": 789,
     "amount": "50.50000",
     "timestamp": "2024-01-15T11:00:00"
   }

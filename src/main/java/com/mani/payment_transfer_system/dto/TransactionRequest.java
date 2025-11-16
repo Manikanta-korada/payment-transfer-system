@@ -1,5 +1,6 @@
 package com.mani.payment_transfer_system.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
@@ -22,9 +23,11 @@ import java.math.BigDecimal;
 public class TransactionRequest {
 
     @NotNull(message = "Source account ID is required")
+    @JsonProperty("source_account_id")
     private Long sourceAccountId;
 
     @NotNull(message = "Destination account ID is required")
+    @JsonProperty("destination_account_id")
     private Long destinationAccountId;
 
     @NotNull(message = "Amount is required")

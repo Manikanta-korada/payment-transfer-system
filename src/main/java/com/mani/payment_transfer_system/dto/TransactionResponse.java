@@ -1,5 +1,6 @@
 package com.mani.payment_transfer_system.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,9 @@ import java.time.LocalDateTime;
 public class TransactionResponse {
 
     private Long id;
+    @JsonProperty("source_account_id")
     private Long sourceAccountId;
+    @JsonProperty("destination_account_id")
     private Long destinationAccountId;
     private BigDecimal amount;
     private LocalDateTime timestamp;

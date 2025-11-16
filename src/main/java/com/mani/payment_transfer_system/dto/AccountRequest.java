@@ -1,5 +1,6 @@
 package com.mani.payment_transfer_system.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
@@ -22,10 +23,12 @@ import java.math.BigDecimal;
 public class AccountRequest {
 
     @NotNull(message = "Account ID is required")
+    @JsonProperty("account_id")
     private Long accountId;
 
     @NotNull(message = "Initial balance is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Initial balance must be non-negative")
+    @JsonProperty("initial_balance")
     private BigDecimal initialBalance;
 }
 

@@ -38,7 +38,7 @@ class TransactionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sourceRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         // Create destination account
         AccountRequest destRequest = new AccountRequest(222L, new BigDecimal("100.00000"));
@@ -46,7 +46,7 @@ class TransactionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(destRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         // Process transaction
         TransactionRequest transactionRequest = new TransactionRequest(111L, 222L, new BigDecimal("50.12345"));
@@ -75,7 +75,7 @@ class TransactionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sourceRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         // Create destination account
         AccountRequest destRequest = new AccountRequest(444L, new BigDecimal("100.00000"));
@@ -83,7 +83,7 @@ class TransactionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(destRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         // Try to transfer more than available
         TransactionRequest transactionRequest = new TransactionRequest(333L, 444L, new BigDecimal("50.00000"));
@@ -138,10 +138,10 @@ class TransactionIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(2)))
-                .andExpect(jsonPath("$[?(@.sourceAccountId == 555 && @.destinationAccountId == 666)]").exists())
-                .andExpect(jsonPath("$[?(@.sourceAccountId == 666 && @.destinationAccountId == 555)]").exists())
-                .andExpect(jsonPath("$[*].sourceAccountId").exists())
-                .andExpect(jsonPath("$[*].destinationAccountId").exists())
+                .andExpect(jsonPath("$[?(@.source_account_id == 555 && @.destination_account_id == 666)]").exists())
+                .andExpect(jsonPath("$[?(@.source_account_id == 666 && @.destination_account_id == 555)]").exists())
+                .andExpect(jsonPath("$[*].source_account_id").exists())
+                .andExpect(jsonPath("$[*].destination_account_id").exists())
                 .andExpect(jsonPath("$[*].amount").exists())
                 .andExpect(jsonPath("$[*].timestamp").exists());
     }

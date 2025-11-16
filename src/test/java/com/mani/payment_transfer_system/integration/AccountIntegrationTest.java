@@ -37,12 +37,12 @@ class AccountIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         // Get account
         mockMvc.perform(get("/accounts/999"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId").value(999))
+                .andExpect(jsonPath("$.account_id").value(999))
                 .andExpect(jsonPath("$.balance").value("100.23344"));
     }
 
@@ -55,7 +55,7 @@ class AccountIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value("Account created successfully"));
+                .andExpect(content().string(""));
 
         // Try to create duplicate
         mockMvc.perform(post("/accounts")

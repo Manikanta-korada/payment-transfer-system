@@ -2,7 +2,6 @@ package com.mani.payment_transfer_system.controller;
 
 import com.mani.payment_transfer_system.dto.AccountRequest;
 import com.mani.payment_transfer_system.dto.AccountResponse;
-import com.mani.payment_transfer_system.dto.SuccessResponse;
 import com.mani.payment_transfer_system.service.AccountService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -29,16 +28,15 @@ public class AccountController {
      * Creates a new account with the specified initial balance.
      *
      * @param request the account creation request containing account ID and initial balance
-     * @return ResponseEntity with success message indicating account was created successfully
+     * @return ResponseEntity with empty body (201 Created) on success
      * @throws AccountAlreadyExistsException if an account with the same ID already exists
      */
     @PostMapping
-    public ResponseEntity<SuccessResponse> createAccount(@Valid @RequestBody AccountRequest request) {
+    public ResponseEntity<Void> createAccount(@Valid @RequestBody AccountRequest request) {
         logger.info("Creating account with ID: {}", request.getAccountId());
         accountService.createAccount(request);
         logger.info("Account created successfully with ID: {}", request.getAccountId());
-        SuccessResponse response = new SuccessResponse("Account created successfully");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
