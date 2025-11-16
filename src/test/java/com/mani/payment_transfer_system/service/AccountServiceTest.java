@@ -6,6 +6,7 @@ import com.mani.payment_transfer_system.entity.Account;
 import com.mani.payment_transfer_system.dto.AccountRequest;
 import com.mani.payment_transfer_system.dto.AccountResponse;
 import com.mani.payment_transfer_system.repository.AccountRepository;
+import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,9 @@ class AccountServiceTest {
     @Mock
     private AccountRepository accountRepository;
 
+    @Mock
+    private MetricsService metricsService;
+
     @InjectMocks
     private AccountService accountService;
 
@@ -36,25 +40,36 @@ class AccountServiceTest {
     void setUp() {
         accountRequest = new AccountRequest(123L, new BigDecimal("100.23344"));
         account = new Account(123L, new BigDecimal("100.23344"));
+        
+        // Mock MetricsService methods with lenient stubbing (not all tests use all methods)
+        Timer.Sample timerSample = Timer.start();
+        lenient().when(metricsService.startAccountCreationTimer()).thenReturn(timerSample);
+        lenient().doNothing().when(metricsService).stopAccountCreationTimer(any(Timer.Sample.class));
+        lenient().doNothing().when(metricsService).recordAccountCreation();
+        lenient().doNothing().when(metricsService).recordAccountQuery();
+        lenient().doNothing().when(metricsService).recordAccountNotFoundError();
+        lenient().doNothing().when(metricsService).recordAccountAlreadyExistsError();
     }
 
     @Test
     void testCreateAccount_Success() {
-        when(accountRepository.existsByAccountId(123L)).thenReturn(false);
+        when(accountRepository.findByAccountIdWithLock(123L)).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
         assertDoesNotThrow(() -> accountService.createAccount(accountRequest));
-        verify(accountRepository).existsByAccountId(123L);
+        verify(accountRepository).findByAccountIdWithLock(123L);
         verify(accountRepository).save(any(Account.class));
+        verify(metricsService).recordAccountCreation();
     }
 
     @Test
     void testCreateAccount_AccountAlreadyExists() {
-        when(accountRepository.existsByAccountId(123L)).thenReturn(true);
+        when(accountRepository.findByAccountIdWithLock(123L)).thenReturn(Optional.of(account));
 
         assertThrows(AccountAlreadyExistsException.class, () -> accountService.createAccount(accountRequest));
-        verify(accountRepository).existsByAccountId(123L);
+        verify(accountRepository).findByAccountIdWithLock(123L);
         verify(accountRepository, never()).save(any(Account.class));
+        verify(metricsService).recordAccountAlreadyExistsError();
     }
 
     @Test
@@ -67,6 +82,7 @@ class AccountServiceTest {
         assertEquals(123L, response.getAccountId());
         assertEquals(new BigDecimal("100.23344"), response.getBalance());
         verify(accountRepository).findByAccountId(123L);
+        verify(metricsService).recordAccountQuery();
     }
 
     @Test
@@ -75,15 +91,16 @@ class AccountServiceTest {
 
         assertThrows(AccountNotFoundException.class, () -> accountService.getAccount(123L));
         verify(accountRepository).findByAccountId(123L);
+        verify(metricsService).recordAccountNotFoundError();
     }
 
     @Test
     void testCreateAccount_UnexpectedException() {
-        when(accountRepository.existsByAccountId(123L)).thenThrow(new RuntimeException("Database error"));
+        when(accountRepository.findByAccountIdWithLock(123L)).thenThrow(new RuntimeException("Database error"));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> accountService.createAccount(accountRequest));
         assertEquals("Database error", exception.getMessage());
-        verify(accountRepository).existsByAccountId(123L);
+        verify(accountRepository).findByAccountIdWithLock(123L);
     }
 
     @Test

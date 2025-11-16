@@ -1,5 +1,6 @@
 package com.mani.payment_transfer_system.exception;
 
+import com.mani.payment_transfer_system.service.MetricsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ import static org.mockito.Mockito.*;
 class GlobalExceptionHandlerTest {
 
     private GlobalExceptionHandler globalExceptionHandler;
+    private MetricsService metricsService;
 
     @BeforeEach
     void setUp() {
-        globalExceptionHandler = new GlobalExceptionHandler();
+        metricsService = mock(MetricsService.class);
+        globalExceptionHandler = new GlobalExceptionHandler(metricsService);
     }
 
     @Test

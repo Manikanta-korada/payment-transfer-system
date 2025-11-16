@@ -6,6 +6,7 @@ import com.mani.payment_transfer_system.exception.AccountNotFoundException;
 import com.mani.payment_transfer_system.dto.AccountRequest;
 import com.mani.payment_transfer_system.dto.AccountResponse;
 import com.mani.payment_transfer_system.service.AccountService;
+import com.mani.payment_transfer_system.service.MetricsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,6 +32,9 @@ class AccountControllerTest {
 
     @MockBean
     private AccountService accountService;
+
+    @MockBean
+    private MetricsService metricsService;
 
     @Test
     void testCreateAccount_Success() throws Exception {

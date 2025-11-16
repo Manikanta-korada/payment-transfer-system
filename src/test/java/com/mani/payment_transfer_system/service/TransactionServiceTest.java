@@ -8,6 +8,7 @@ import com.mani.payment_transfer_system.entity.Transaction;
 import com.mani.payment_transfer_system.dto.TransactionRequest;
 import com.mani.payment_transfer_system.repository.AccountRepository;
 import com.mani.payment_transfer_system.repository.TransactionRepository;
+import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,9 @@ class TransactionServiceTest {
     @Mock
     private TransactionRepository transactionRepository;
 
+    @Mock
+    private MetricsService metricsService;
+
     @InjectMocks
     private TransactionService transactionService;
 
@@ -45,6 +49,17 @@ class TransactionServiceTest {
         transactionRequest = new TransactionRequest(123L, 456L, new BigDecimal("50.12345"));
         sourceAccount = new Account(123L, new BigDecimal("100.00000"));
         destinationAccount = new Account(456L, new BigDecimal("200.00000"));
+        
+        // Mock MetricsService methods with lenient stubbing (not all tests use all methods)
+        Timer.Sample timerSample = Timer.start();
+        lenient().when(metricsService.startTransactionTimer()).thenReturn(timerSample);
+        lenient().doNothing().when(metricsService).stopTransactionTimer(any(Timer.Sample.class));
+        lenient().doNothing().when(metricsService).recordTransaction(any(BigDecimal.class));
+        lenient().doNothing().when(metricsService).recordTransactionQuery();
+        lenient().doNothing().when(metricsService).recordAccountNotFoundError();
+        lenient().doNothing().when(metricsService).recordInsufficientBalanceError();
+        lenient().doNothing().when(metricsService).recordInvalidAmountError();
+        lenient().doNothing().when(metricsService).recordError();
     }
 
     @Test
@@ -69,6 +84,7 @@ class TransactionServiceTest {
         
         verify(accountRepository).saveAll(anyList());
         verify(transactionRepository).save(any(Transaction.class));
+        verify(metricsService).recordTransaction(any(BigDecimal.class));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<Account>> accountListCaptor = ArgumentCaptor.forClass(List.class);
@@ -88,6 +104,7 @@ class TransactionServiceTest {
         verify(accountRepository).findByAccountIdWithLock(123L);
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordAccountNotFoundError();
     }
 
     @Test
@@ -105,6 +122,7 @@ class TransactionServiceTest {
         
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordAccountNotFoundError();
     }
 
     @Test
@@ -123,6 +141,7 @@ class TransactionServiceTest {
         
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordInsufficientBalanceError();
     }
 
     @Test
@@ -133,6 +152,7 @@ class TransactionServiceTest {
         verify(accountRepository, never()).findByAccountIdWithLock(any());
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordInvalidAmountError();
     }
 
     @Test
@@ -143,6 +163,7 @@ class TransactionServiceTest {
         verify(accountRepository, never()).findByAccountIdWithLock(any());
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordInvalidAmountError();
     }
 
     @Test
@@ -153,6 +174,7 @@ class TransactionServiceTest {
         verify(accountRepository, never()).findByAccountIdWithLock(any());
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordInvalidAmountError();
     }
 
     @Test
@@ -163,6 +185,7 @@ class TransactionServiceTest {
         verify(accountRepository, never()).findByAccountIdWithLock(any());
         verify(accountRepository, never()).saveAll(anyList());
         verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(metricsService).recordInvalidAmountError();
     }
 
     @Test
@@ -261,6 +284,7 @@ class TransactionServiceTest {
         assertEquals(new BigDecimal("50.00000"), result.get(0).getAmount());
         
         verify(transactionRepository).findAll();
+        verify(metricsService).recordTransactionQuery();
     }
 
     @Test
@@ -273,6 +297,7 @@ class TransactionServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(transactionRepository).findAll();
+        verify(metricsService).recordTransactionQuery();
     }
 }
 

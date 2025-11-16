@@ -5,6 +5,7 @@ import com.mani.payment_transfer_system.exception.AccountNotFoundException;
 import com.mani.payment_transfer_system.exception.InsufficientBalanceException;
 import com.mani.payment_transfer_system.exception.InvalidAmountException;
 import com.mani.payment_transfer_system.dto.TransactionRequest;
+import com.mani.payment_transfer_system.service.MetricsService;
 import com.mani.payment_transfer_system.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ class TransactionControllerTest {
 
     @MockBean
     private TransactionService transactionService;
+
+    @MockBean
+    private MetricsService metricsService;
 
     @Test
     void testSubmitTransaction_Success() throws Exception {

@@ -59,11 +59,13 @@ class TransactionIntegrationTest {
         // Verify source account balance
         mockMvc.perform(get("/accounts/111"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.account_id").value(111))
                 .andExpect(jsonPath("$.balance").value("149.87655"));
 
         // Verify destination account balance
         mockMvc.perform(get("/accounts/222"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.account_id").value(222))
                 .andExpect(jsonPath("$.balance").value("150.12345"));
     }
 
